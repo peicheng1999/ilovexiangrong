@@ -6,41 +6,89 @@
     <title>每日抽奖</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: "Arial", sans-serif;
             text-align: center;
-            margin: 50px;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            color: #fff;
         }
-        .lottery-button {
-            padding: 10px 20px;
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        p {
+            font-size: 16px;
+        }
+        .lottery-button, .redeem-button {
+            padding: 12px 20px;
             font-size: 18px;
             cursor: pointer;
-            background-color: #28a745;
-            color: white;
+            background-color: #ffd700;
+            color: #333;
             border: none;
-            border-radius: 5px;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: 0.3s;
+            margin-top: 15px;
+        }
+        .lottery-button:hover, .redeem-button:hover {
+            background-color: #ffcc00;
         }
         .lottery-button:disabled {
-            background-color: #ccc;
+            background-color: #777;
             cursor: not-allowed;
+        }
+        .input-container {
+            margin-top: 20px;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: none;
+            margin-right: 10px;
+        }
+        .message {
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .prize-image {
+            max-width: 100px;
+            margin-top: 15px;
         }
     </style>
 </head>
 <body>
-    <h1>每日抽奖</h1>
-    <p>点击按钮试试你的运气！使用兑换码可以增加抽奖次数。</p>
-    <button id="lotteryBtn" class="lottery-button">抽奖</button>
-    <p id="result"></p>
-    <input type="text" id="codeInput" placeholder="输入兑换码">
-    <button id="redeemBtn">兑换</button>
-    <p id="message"></p>
+    <div class="container">
+        <h1>🎉 每日抽奖 🎉</h1>
+        <p>点击按钮试试你的运气！使用兑换码可以增加抽奖次数。</p>
+        <button id="lotteryBtn" class="lottery-button">🎁 立即抽奖</button>
+        <p id="result" class="message"></p>
+        <img id="prizeImage" class="prize-image" src="" style="display: none;">
+        
+        <div class="input-container">
+            <input type="text" id="codeInput" placeholder="输入兑换码">
+            <button id="redeemBtn" class="redeem-button">兑换</button>
+        </div>
+        <p id="message" class="message"></p>
+    </div>
 
     <script>
         const prizes = [
-            { name: "一等奖", probability: 0.05 },
-            { name: "二等奖", probability: 0.15 },
-            { name: "三等奖", probability: 0.30 },
-            { name: "安慰奖", probability: 0.40 },
-            { name: "再接再厉", probability: 0.10 }
+            { name: "一等奖 🏆", probability: 0.05, image: "gold_prize.png", message: "🎊 太棒了！你赢得了一等奖！好运爆棚！" },
+            { name: "二等奖 🎖", probability: 0.15, image: "silver_prize.png", message: "🎉 恭喜你！二等奖到手了，继续加油！" },
+            { name: "三等奖 🥉", probability: 0.30, image: "bronze_prize.png", message: "✨ 你获得了三等奖！小幸运也很棒哦！" },
+            { name: "安慰奖 🍀", probability: 0.40, image: "comfort_prize.png", message: "🍀 别气馁！安慰奖也是幸运的一部分！" },
+            { name: "再接再厉 😅", probability: 0.10, image: "try_again.png", message: "😅 再接再厉！下次一定中大奖！" }
         ];
 
         const validCodes = ["LUCKY2025", "BONUS123", "FREEPLAY"];
@@ -48,16 +96,23 @@
         
         const lotteryBtn = document.getElementById("lotteryBtn");
         const resultText = document.getElementById("result");
+        const prizeImage = document.getElementById("prizeImage");
         const codeInput = document.getElementById("codeInput");
         const redeemBtn = document.getElementById("redeemBtn");
         const messageText = document.getElementById("message");
 
         function getRemainingDraws() {
-            return parseInt(localStorage.getItem("remainingDraws")) || 0;
+            let draws = parseInt(localStorage.getItem("remainingDraws"));
+            if (isNaN(draws)) {
+                draws = 0; // 让用户首次进入页面时有1次抽奖机会
+                localStorage.setItem("remainingDraws", draws);
+            }
+            return draws;
         }
 
         function setRemainingDraws(count) {
             localStorage.setItem("remainingDraws", count);
+            updateButtonState();
         }
 
         function canDraw() {
@@ -66,41 +121,26 @@
 
         function drawLottery() {
             if (!canDraw()) {
-                resultText.innerText = "没有抽奖次数，请使用兑换码获取更多机会！";
+                resultText.innerText = "❌ 没有抽奖次数，请使用兑换码获取更多机会！";
                 return;
             }
             
             let random = Math.random();
             let cumulativeProbability = 0;
-            let selectedPrize = "再接再厉"; 
+            let selectedPrize = prizes[prizes.length - 1]; 
 
             for (let prize of prizes) {
                 cumulativeProbability += prize.probability;
                 if (random < cumulativeProbability) {
-                    selectedPrize = prize.name;
+                    selectedPrize = prize;
                     break;
                 }
             }
             
-            resultText.innerText = `恭喜！你获得了：${selectedPrize}`;
+            resultText.innerText = selectedPrize.message;
+            prizeImage.src = selectedPrize.image;
+            prizeImage.style.display = "block";
             setRemainingDraws(getRemainingDraws() - 1);
-            updateButtonState();
-        }
-
-        function redeemCode() {
-            const code = codeInput.value.trim();
-            if (validCodes.includes(code) && !usedCodes.includes(code)) {
-                setRemainingDraws(getRemainingDraws() + 1);
-                usedCodes.push(code);
-                localStorage.setItem("usedCodes", JSON.stringify(usedCodes));
-                messageText.innerText = "兑换成功！你获得了一次抽奖机会。";
-                codeInput.value = "";
-                updateButtonState();
-            } else if (usedCodes.includes(code)) {
-                messageText.innerText = "该兑换码已被使用，无法再次兑换。";
-            } else {
-                messageText.innerText = "无效的兑换码，请重试。";
-            }
         }
 
         function updateButtonState() {
@@ -108,13 +148,10 @@
         }
 
         window.onload = function() {
-            usedCodes = JSON.parse(localStorage.getItem("usedCodes")) || [];
             updateButtonState();
-        };
+        }
 
-        updateButtonState();
         lotteryBtn.addEventListener("click", drawLottery);
-        redeemBtn.addEventListener("click", redeemCode);
     </script>
 </body>
 </html>
