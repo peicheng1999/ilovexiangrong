@@ -44,6 +44,7 @@
         ];
 
         const validCodes = ["LUCKY2025", "BONUS123", "FREEPLAY"];
+        let usedCodes = JSON.parse(localStorage.getItem("usedCodes")) || [];
         
         const lotteryBtn = document.getElementById("lotteryBtn");
         const resultText = document.getElementById("result");
@@ -88,11 +89,15 @@
 
         function redeemCode() {
             const code = codeInput.value.trim();
-            if (validCodes.includes(code)) {
+            if (validCodes.includes(code) && !usedCodes.includes(code)) {
                 setRemainingDraws(getRemainingDraws() + 1);
+                usedCodes.push(code);
+                localStorage.setItem("usedCodes", JSON.stringify(usedCodes));
                 messageText.innerText = "兑换成功！你获得了一次抽奖机会。";
                 codeInput.value = "";
                 updateButtonState();
+            } else if (usedCodes.includes(code)) {
+                messageText.innerText = "该兑换码已被使用，无法再次兑换。";
             } else {
                 messageText.innerText = "无效的兑换码，请重试。";
             }
