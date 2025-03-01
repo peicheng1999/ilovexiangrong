@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每日抽奖</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        .lottery-button {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .lottery-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <h1>每日抽奖</h1>
+    <p>点击按钮试试你的运气！使用兑换码可以增加抽奖次数。</p>
+    <button id="lotteryBtn" class="lottery-button">抽奖</button>
+    <p id="result"></p>
+    <input type="text" id="codeInput" placeholder="输入兑换码">
+    <button id="redeemBtn">兑换</button>
+    <p id="message"></p>
+
+    <script>
+        const prizes = [
+            { name: "一等奖", probability: 0.05 },
+            { name: "二等奖", probability: 0.15 },
+            { name: "三等奖", probability: 0.30 },
+            { name: "安慰奖", probability: 0.40 },
+            { name: "再接再厉", probability: 0.10 }
+        ];
+
+        const validCodes = ["LUCKY2025", "BONUS123", "FREEPLAY"];
+        
+        const lotteryBtn = document.getElementById("lotteryBtn");
+        const resultText = document.getElementById("result");
+        const codeInput = document.getElementById("codeInput");
+        const redeemBtn = document.getElementById("redeemBtn");
+        const messageText = document.getElementById("message");
+
+        function getRemainingDraws() {
+            return parseInt(localStorage.getItem("remainingDraws")) || 0;
+        }
+
+        function setRemainingDraws(count) {
+            localStorage.setItem("remainingDraws", count);
+        }
+
+        function canDraw() {
+            return getRemainingDraws() > 0;
+        }
+
+        function drawLottery() {
+            if (!canDraw()) {
+                resultText.innerText = "没有抽奖次数，请使用兑换码获取更多机会！";
+                return;
+            }
+            
+            let random = Math.random();
+            let cumulativeProbability = 0;
+            let selectedPrize = "再接再厉"; 
+
+            for (let prize of prizes) {
+                cumulativeProbability += prize.probability;
+                if (random < cumulativeProbability) {
+                    selectedPrize = prize.name;
+                    break;
+                }
+            }
+            
+            resultText.innerText = `恭喜！你获得了：${selectedPrize}`;
+            setRemainingDraws(getRemainingDraws() - 1);
+            updateButtonState();
+        }
+
+        function redeemCode() {
+            const code = codeInput.value.trim();
+            if (validCodes.includes(code)) {
+                setRemainingDraws(getRemainingDraws() + 1);
+                messageText.innerText = "兑换成功！你获得了一次抽奖机会。";
+                codeInput.value = "";
+                updateButtonState();
+            } else {
+                messageText.innerText = "无效的兑换码，请重试。";
+            }
+        }
+
+        function updateButtonState() {
+            lotteryBtn.disabled = !canDraw();
+        }
+
+        updateButtonState();
+        lotteryBtn.addEventListener("click", drawLottery);
+        redeemBtn.addEventListener("click", redeemCode);
+    </script>
+</body>
+</html>
