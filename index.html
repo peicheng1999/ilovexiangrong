@@ -62,7 +62,7 @@
         }
         .prize-img {
             margin-top: 15px;
-            width: 100px;
+            width: 200px;
             height: auto;
             display: block;
             margin-left: auto;
@@ -98,12 +98,12 @@
         const validCodes = new Set(["GODDESS38", "LADYLUCK", "FESTIVAL2025", "QUEEN38", "WOMENSDAY", "BEAUTYWIN"]);
         
         const prizePool = [
-            { name: "iPhone 15", probability: 1.0, image: "iphone15.png" },
-            { name: "MacBook Air", probability: 0.03, image: "macbook.png" },
-            { name: "AirPods Pro", probability: 0.07, image: "airpods.png" },
-            { name: "购物券 100 元", probability: 0.15, image: "coupon100.png" },
-            { name: "购物券 50 元", probability: 0.20, image: "coupon50.png" },
-            { name: "谢谢参与", probability: 0.50, image: "no_prize.png" }
+            { name: "亚朵星球深睡枕", probability: 0.1, image: "yaduo.png" },
+            { name: "兰蔻小黑瓶", probability: 0.1, image: "lankou2.png" },
+            { name: "兰蔻眼影盘", probability: 0.1, image: "lankou1.png" },
+            { name: "京东E卡50元", probability: 0.1, image: "shop50.png" },
+            { name: "京东E卡100元", probability: 0.1, image: "shop100.png" },
+            { name: "谢谢参与", probability: 0.5, image: "no_prize.png" }
         ];
         
         function drawPrize() {
@@ -140,7 +140,11 @@
                 }
             }
             
-            prizeMessage.textContent = `恭喜获得 ${selectedPrize.name}！请联系你的宝贝兑换吧~`;
+            if (selectedPrize.name === "谢谢参与") {
+                prizeMessage.innerHTML = `<span class='no-prize'>很遗憾这次未能中奖，请继续努力吧~</span>`;
+            } else {
+                prizeMessage.innerHTML = `<span class='prize-text'>🥳 恭喜获得 ${selectedPrize.name}！<br>请联系你的宝贝兑换吧~</span>`;
+            }
             prizeImage.src = selectedPrize.image;
             prizeImage.style.display = "block";
         }
