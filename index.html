@@ -107,6 +107,11 @@
             lotteryBtn.disabled = !canDraw();
         }
 
+        window.onload = function() {
+            usedCodes = JSON.parse(localStorage.getItem("usedCodes")) || [];
+            updateButtonState();
+        };
+
         updateButtonState();
         lotteryBtn.addEventListener("click", drawLottery);
         redeemBtn.addEventListener("click", redeemCode);
