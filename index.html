@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>38 女神节惊喜抽大奖</title>
+    <title>38女神节 惊喜抽大奖</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -20,33 +20,33 @@
             border-radius: 12px;
             box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
             text-align: center;
-            width: 400px;
+            width: 450px;
         }
         h1 {
             color: #d63384;
-            font-size: 24px;
+            font-size: 26px;
             margin-bottom: 10px;
         }
         p {
-            font-size: 16px;
+            font-size: 18px;
             color: #555;
         }
         input {
-            width: 100%;
-            padding: 12px;
+            width: 40%;
+            padding: 14px;
             margin: 12px 0;
             border: 1px solid #ddd;
-            border-radius: 6px;
+            border-radius: 8px;
             text-align: center;
-            font-size: 16px;
+            font-size: 18px;
         }
         button {
             background-color: #d63384;
             color: white;
             border: none;
-            padding: 12px;
-            width: 100%;
-            border-radius: 6px;
+            padding: 14px;
+            width: 60%;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 18px;
             transition: background 0.3s;
@@ -56,35 +56,61 @@
         }
         .prize {
             margin-top: 20px;
-            font-size: 20px;
+            font-size: 16px;
             font-weight: bold;
             color: #d63384;
+        }
+        .prize-img {
+            margin-top: 15px;
+            width: 100px;
+            height: auto;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
         .error {
             color: red;
             font-size: 14px;
         }
+        .code-list {
+            background: #f8d7da;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #721c24;
+            margin-top: 15px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎀 38 女神节惊喜抽大奖 🎀</h1>
+        <h1>🎀 38女神节 惊喜抽大奖 🎀</h1>
         <p>输入兑换码，看看你的幸运奖品！</p>
         <input type="text" id="codeInput" placeholder="输入兑换码">
         <p class="error" id="errorMessage"></p>
         <button onclick="drawPrize()">立即抽奖</button>
         <p class="prize" id="prizeMessage"></p>
+        <img id="prizeImage" class="prize-img" style="display: none;" src="" alt="奖品图片">
     </div>
 
     <script>
         let redeemedCodes = new Set();
-        const validCodes = new Set(["GODDESS38", "LADYLUCK", "FESTIVAL2025", "QUEEN38", "WOMENSDAY"]);
-        const prizes = ["iPhone 15", "MacBook Air", "AirPods Pro", "购物券 100 元", "购物券 50 元", "谢谢参与"];
+        const validCodes = new Set(["GODDESS38", "LADYLUCK", "FESTIVAL2025", "QUEEN38", "WOMENSDAY", "BEAUTYWIN"]);
+        
+        const prizePool = [
+            { name: "iPhone 15", probability: 1.0, image: "iphone15.png" },
+            { name: "MacBook Air", probability: 0.03, image: "macbook.png" },
+            { name: "AirPods Pro", probability: 0.07, image: "airpods.png" },
+            { name: "购物券 100 元", probability: 0.15, image: "coupon100.png" },
+            { name: "购物券 50 元", probability: 0.20, image: "coupon50.png" },
+            { name: "谢谢参与", probability: 0.50, image: "no_prize.png" }
+        ];
         
         function drawPrize() {
             const codeInput = document.getElementById("codeInput").value.trim().toUpperCase();
             const errorMessage = document.getElementById("errorMessage");
             const prizeMessage = document.getElementById("prizeMessage");
+            const prizeImage = document.getElementById("prizeImage");
             
             if (!codeInput) {
                 errorMessage.textContent = "请输入兑换码";
@@ -101,8 +127,22 @@
             
             errorMessage.textContent = "";
             redeemedCodes.add(codeInput);
-            const randomPrize = prizes[Math.floor(Math.random() * prizes.length)];
-            prizeMessage.textContent = `🎉 恭喜获得: ${randomPrize} 🎁`;
+            
+            let random = Math.random();
+            let cumulativeProbability = 0;
+            let selectedPrize = prizePool[prizePool.length - 1];
+            
+            for (let prize of prizePool) {
+                cumulativeProbability += prize.probability;
+                if (random <= cumulativeProbability) {
+                    selectedPrize = prize;
+                    break;
+                }
+            }
+            
+            prizeMessage.textContent = `恭喜获得 ${selectedPrize.name}！请联系你的宝贝兑换吧~`;
+            prizeImage.src = selectedPrize.image;
+            prizeImage.style.display = "block";
         }
     </script>
 </body>
