@@ -95,15 +95,22 @@
 
     <script>
         let redeemedCodes = new Set();
-        const validCodes = new Set(["20240815"]);
+        const validCodes = new Set(["7A9B3C","D4E8F2","5G6H1J","K3L7M9","N2P8Q4"]);
         
         const prizePool = [
-            { name: "亚朵星球深睡枕", probability: 0.1, image: "yaduo.png" },
-            { name: "兰蔻小黑瓶", probability: 0.1, image: "lankou2.png" },
-            { name: "兰蔻眼影盘", probability: 0.1, image: "lankou1.png" },
-            { name: "京东E卡50元", probability: 0.1, image: "shop50.png" },
-            { name: "京东E卡100元", probability: 0.1, image: "shop100.png" },
-            { name: "谢谢参与", probability: 0.5, image: "no_prize.png" }
+            { name: "兰蔻小黑瓶", probability: 0.03, image: "lankou1.png" },
+            { name: "兰蔻彩妆盘", probability: 0.03, image: "lankou2.png" },
+            { name: "亚朵星球深睡枕", probability: 0.03, image: "yaduo.png" },
+            { name: "迷你内衣洗衣机", probability: 0.03, image: "xiyi.png" },
+            { name: "京东E卡200元", probability: 0.03, image: "shop200.png" },
+            { name: "京东E卡300元", probability: 0.03, image: "shop300.png" },
+            { name: "CARD1 - 4728", type: "card", probability: 0.06, image: "gouwu.png" },
+            { name: "CARD2 - 9156", type: "card", probability: 0.06, image: "gouwu.png" },
+            { name: "CARD3 - 6384", type: "card", probability: 0.06, image: "gouwu.png" },
+            { name: "CARD4 - 2971", type: "card", probability: 0.06, image: "gouwu.png" },
+            { name: "CARD5 - 8432", type: "card", probability: 0.06, image: "gouwu.png" },
+            { name: "CARD6 - 5067", type: "card", probability: 0.06, image: "gouwu.png" },
+            { name: "谢谢参与", probability: 0.46, image: "no_prize.png" }
         ];
         
         function drawPrize() {
@@ -142,8 +149,13 @@
             
             if (selectedPrize.name === "谢谢参与") {
                 prizeMessage.innerHTML = `<span class='no-prize'>很遗憾这次未能中奖，请继续努力吧~</span>`;
-            } else {
-                prizeMessage.innerHTML = `<span class='prize-text'>🥳 恭喜获得 ${selectedPrize.name}！<br>请联系你的宝贝兑换吧~</span>`;
+            } 
+            else if (selectedPrize.type === "card"){
+                prizeMessage.innerHTML = `<span class='prize-text'>🥳 恭喜获得 随机购物卡！<br>
+                    解压密码：${selectedPrize.name}</span>`;
+            }
+            else {
+                prizeMessage.innerHTML = `<span class='prize-text'>🥳 恭喜获得 ${selectedPrize.name}！<br>快联系你的宝贝兑换吧~</span>`;
             }
             prizeImage.src = selectedPrize.image;
             prizeImage.style.display = "block";
